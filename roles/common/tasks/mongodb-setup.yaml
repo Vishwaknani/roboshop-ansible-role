@@ -8,14 +8,14 @@
     name: mongodb-org-shell
     state: present
 
-- name: get the entries count
-  ansible.builtin.command:  mongo --host mongodb.vishwak.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.catalogue.count()'
-  register: entries_count
+- name: "get the entries count"
+  ansible.builtin.shell:  mongo --host {{MONGODB_HOST}} --quiet --eval 'db = db.getSiblingDB("catalogue"); db.catalogue.count()'
+  register: products_count
   when: component == "catalogue"
 
 - name: get the entries count
-  ansible.builtin.command:  mongo --host mongodb.vishwak.online --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
-  register: entries_count
+  ansible.builtin.shell:  mongo --host {{MONGODB_HOST}} --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
+  register: user_count
   when: component == "user"
 
 
@@ -23,7 +23,12 @@
 #   ansible.builtin.debug:
 #     msg: "product count: {{product_count}}"
 
-- name: "load {{component}} data"
-  ansible.builtin.command: "mongo --host mongodb.vishwak.online < /app/schema/{{component}}.js"
-  when: entries_count.stdout == "0" # keep double quotes
-  ignore_errors: true
+- name: "load catalogue data"
+  ansible.builtin.shell: "mongo --host {{MONGODB_HOST}} < /app/schema/{{component}}.js"
+  when: component == "catalogue" and products_count.stdout == "0"  # keep double quotes
+  #ignore_errors: true
+
+- name: "load user data"
+  ansible.builtin.shell: "mongo --host {{MONGODB_HOST}} < /app/schema/{{component}}.js"
+  when: component == "user" and users_count.stdout == "0"  # keep double quotes
+  #ignore_errors: true
