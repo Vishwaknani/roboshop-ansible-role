@@ -9,7 +9,7 @@
     state: present
 
 - name: get the entries count
-  ansible.builtin.command:  mongo --host mongodb.vishwak.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
+  ansible.builtin.command:  mongo --host mongodb.vishwak.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.entries.count()'
   register: entries_count
   when: component == "catalogue"
 
