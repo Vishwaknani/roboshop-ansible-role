@@ -1,1 +1,2 @@
 MONGODB_HOST: mongodb.vishwak.online
+REDIS_HOST: redis.vishwak.online
